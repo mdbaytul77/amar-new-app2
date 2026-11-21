@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NovaSiri AI — Study & Voice Assistant (GitHub Pages Ready)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Hind Siliguri', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            surface: '#0d1117',
+            card: '#161b22',
+            cardAlt: '#1f2630',
+            line: '#30363d',
+            brand: '#38bdf8',
+            study: '#22c55e',
+            accentPurple: '#a855f7',
+            dangerRed: '#ef4444',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    html, body {
+      background-color: #0d1117;
+      color: #f0f6fc;
+      font-family: 'Inter', 'Hind Siliguri', sans-serif;
+      overflow-x: hidden;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.92); opacity: 0.7; }
+      70% { transform: scale(1.28); opacity: 0; }
+      100% { transform: scale(1.28); opacity: 0; }
+    }
+    .listening-ring {
+      animation: pulseRing 1.5s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-surface text-slate-100">
+
+  <!-- Top Header -->
+  <header class="sticky top-0 z-30 bg-surface/95 backdrop-blur-md border-b border-line px-3 py-2.5">
+    <div class="max-w-2xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <button
+          type="button"
+          id="brandResetBtn"
+          aria-label="Home and Reset View"
+          class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand via-accentPurple to-pink-500 flex items-center justify-center shrink-0 shadow-md active:scale-95 transition"
+        >
+          <!-- Inline SVG Spark Logo -->
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2l2.35 6.9L21.25 11l-6.9 2.35L12 20.25l-2.35-6.9L2.75 11l6.9-2.1L12 2z" />
+          </svg>
+        </button>
+        <div class="truncate">
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-sm sm:text-base tracking-tight text-white truncate">NovaSiri AI</span>
+            <button
+              type="button"
+              id="githubBadgeBtn"
+              class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-cardAlt text-brand border border-line hover:border-brand transition shrink-0"
+            >
+              GitHub Pages
+            </button>
+          </div>
+          <p id="headerStatusSub" class="text-[11px] text-slate-400 truncate">Ready • Auto Language Match</p>
+        </div>
+      </div>
+
+      <!-- Dedicated Top "পড়ালেখা" Button -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button
+          type="button"
+          id="topStudyBtn"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-study text-slate-950 font-bold text-xs sm:text-sm hover:brightness-110 active:scale-95 transition shadow"
+        >
+          <!-- Inline SVG Book Icon -->
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+          <span>পড়ালেখা</span>
+        </button>
+
+        <button
+          type="button"
+          id="stopSpeechBtn"
+          aria-label="Stop Voice Output"
+          title="Stop Voice"
+          class="p-2 rounded-xl bg-card border border-line text-slate-300 hover:text-white hover:bg-cardAlt active:scale-95 transition"
+        >
+          <!-- Inline SVG Volume Off / Stop Icon -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 w-full max-w-2xl mx-auto px-3 pt-3 pb-44 space-y-3">
+
+    <!-- Language Mode Selector Card -->
+    <section class="bg-card border border-line rounded-2xl p-3 space-y-2.5">
+      <div class="flex items-center justify-between gap-2 flex-wrap">
+        <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+          <!-- Inline SVG Globe / Translate Icon -->
+          <svg class="w-4 h-4 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>ভাষা মোড (Language Mode)</span>
+        </span>
+        <span id="activeLangBadge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-brand/15 text-brand border border-brand/30">
+          Auto Match (EN→EN / BN→BN)
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+        <button
+          type="button"
+          data-lang-mode="auto"
+          class="lang-mode-btn px-2.5 py-2 rounded-xl text-xs font-semibold border border-brand bg-brand/20 text-white active:scale-95 transition text-center"
+        >
+          Auto Smart
+        </button>
+        <button
+          type="button"
+          data-lang-mode="bn-bn"
+          class="lang-mode-btn px-2.5 py-2 rounded-xl text-xs font-semibold border border-line bg-cardAlt text-slate-300 hover:text-white active:scale-95 transition text-center"
+        >
+          বাংলা ↔ বাংলা
+        </button>
+        <button
+          type="button"
+          data-lang-mode="en-en"
+          class="lang-mode-btn px-2.5 py-2 rounded-xl text-xs font-semibold border border-line bg-cardAlt text-slate-300 hover:text-white active:scale-95 transition text-center"
+        >
+          English ↔ English
+        </button>
+        <button
+          type="button"
+          data-lang-mode="en-bn"
+          id="enToBnModeBtn"
+          class="lang-mode-btn px-2.5 py-2 rounded-xl text-xs font-semibold border border-line bg-cardAlt text-slate-300 hover:text-white active:scale-95 transition text-center"
+        >
+          আমি EN → তুমি BN
+        </button>
+      </div>
+      <p id="langModeHint" class="text-[11px] text-slate-400 leading-relaxed">
+        ইংরেজি বললে/লিখলে ইংরেজিতে উত্তর পাবেন, বাংলায় বললে/লিখলে বাংলায় উত্তর পাবেন। অথবা বলুন: "আমি ইংরেজি বলবো তুমি বাংলা বলবে"।
+      </p>
+    </section>
+
+    <!-- Voice Assistant Hub Card -->
+    <section class="bg-card border border-line rounded-2xl p-3.5 shadow-lg">
+      <div class="flex items-center gap-3.5">
+        <div class="relative shrink-0">
+          <div id="listenPulseRing" class="hidden absolute inset-0 rounded-full bg-brand/40 listening-ring pointer-events-none"></div>
+          <button
+            type="button"
+            id="mainMicBtn"
+            aria-label="Start or Stop Voice Input"
+            class="relative w-16 h-16 rounded-full bg-gradient-to-tr from-brand via-accentPurple to-pink-500 flex items-center justify-center text-white shadow-lg active:scale-95 transition"
+          >
+            <!-- Inline SVG Microphone Icon -->
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <span id="micStatePill" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-cardAlt text-slate-300 border border-line">
+              Mic Idle
+            </span>
+            <span id="speechSupportNote" class="text-[10px] text-slate-400 truncate"></span>
+          </div>
+          <p id="liveSpeechPreview" class="text-sm font-medium text-white mt-1.5 break-words">
+            মাইক্রোফোনে চাপ দিন অথবা নিচে লিখুন: "কল হামিদ", "ওপেন instagram", বা "পড়ালেখা"।
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Action Row: পড়ালেখা, কল হামিদ, ওপেন Instagram, নতুন ফ্যাক্ট -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3.5">
+        <button
+          type="button"
+          id="quickStudyBtn"
+          class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-study/15 border border-study/40 text-study hover:bg-study/25 text-xs font-bold active:scale-95 transition"
+        >
+          <!-- Inline SVG Graduation / Book -->
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+          </svg>
+          <span>পড়ালেখা</span>
+        </button>
+
+        <button
+          type="button"
+          id="quickCallHamidBtn"
+          class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25 text-xs font-bold active:scale-95 transition"
+        >
+          <!-- Inline SVG Phone Icon -->
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <span>কল হামিদ</span>
+        </button>
+
+        <button
+          type="button"
+          id="quickOpenInstaBtn"
+          class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-pink-500/15 border border-pink-500/40 text-pink-300 hover:bg-pink-500/25 text-xs font-bold active:scale-95 transition"
+        >
+          <!-- Inline SVG Camera / Instagram Icon -->
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+          </svg>
+          <span>Instagram</span>
+        </button>
+
+        <button
+          type="button"
+          id="quickFactBtn"
+          class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 hover:bg-amber-500/25 text-xs font-bold active:scale-95 transition"
+        >
+          <!-- Inline SVG Lightbulb Icon -->
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+          <span>নতুন ফ্যাক্ট</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Dedicated পড়ালেখা (Study Mode) Panel -->
+    <section id="studyPanel" class="bg-card border border-study/40 rounded-2xl p-3.5 space-y-3 shadow-lg">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-study"></span>
+          <h2 class="text-sm font-bold text-white">পড়ালেখা (Study Companion)</h2>
+        </div>
+        <button
+          type="button"
+          id="toggleStudyCollapseBtn"
+          class="text-xs font-semibold text-study hover:underline px-2 py-1"
+        >
+          Hide / Show
+        </button>
+      </div>
+
+      <div id="studyPanelBody" class="space-y-2.5">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button
+            type="button"
+            data-study-prompt="গণিতের দ্বিঘাত সমীকরণ সমাধান করার সহজ নিয়ম ও একটি উদাহরণ দাও।"
+            class="study-topic-btn p-2.5 rounded-xl bg-cardAlt hover:bg-slate-800 border border-line text-left active:scale-95 transition"
+          >
+            <span class="block text-xs font-bold text-study">📐 গণিত (Math)</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5">সহজ নিয়ম ও সমাধান</span>
+          </button>
+
+          <button
+            type="button"
+            data-study-prompt="বিজ্ঞান ও পদার্থবিজ্ঞানের নিউটনের ৩টি সূত্র সহজ উদাহরণসহ বুঝিয়ে দাও।"
+            class="study-topic-btn p-2.5 rounded-xl bg-cardAlt hover:bg-slate-800 border border-line text-left active:scale-95 transition"
+          >
+            <span class="block text-xs font-bold text-brand">🔬 বিজ্ঞান (Science)</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5">সূত্র ও ব্যাখ্যা</span>
+          </button>
+
+          <button
+            type="button"
+            data-study-prompt="পড়ালেখায় মনোযোগ বাড়ানো ও পরীক্ষার সেরা প্রস্তুতির জন্য ৫টি কার্যকর সাজেশন দাও।"
+            class="study-topic-btn p-2.5 rounded-xl bg-cardAlt hover:bg-slate-800 border border-line text-left active:scale-95 transition"
+          >
+            <span class="block text-xs font-bold text-amber-300">🎯 সাজেশন (Tips)</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5">পরীক্ষার প্রস্তুতি</span>
+          </button>
+
+          <button
+            type="button"
+            data-study-prompt="Explain how a basic DC motor or LED circuit works in simple steps."
+            class="study-topic-btn p-2.5 rounded-xl bg-cardAlt hover:bg-slate-800 border border-line text-left active:scale-95 transition"
+          >
+            <span class="block text-xs font-bold text-purple-300">⚡ Circuits & Tech</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5">Step-by-step guide</span>
+          </button>
+        </div>
+
+        <!-- Hamid Phone Number Config Strip for "কল হামিদ" -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-line">
+          <label for="hamidPhoneInput" class="text-xs text-slate-300 font-medium">
+            হামিদ-এর ফোন নম্বর ("কল হামিদ" বললে কল হবে):
+          </label>
+          <div class="flex items-center gap-1.5">
+            <input
+              id="hamidPhoneInput"
+              type="tel"
+              value="+8801711000000"
+              class="w-40 sm:w-44 bg-surface border border-line rounded-xl px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-study"
+            />
+            <button
+              type="button"
+              id="saveHamidPhoneBtn"
+              class="px-3 py-1.5 rounded-xl bg-cardAlt hover:bg-slate-700 border border-line text-xs font-semibold text-white active:scale-95 transition"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action Cards Zone (Call Hamid / Open Instagram) -->
+    <div id="actionCardsArea" class="space-y-2.5"></div>
+
+    <!-- Conversation & Answers Feed -->
+    <section id="chatFeed" class="space-y-3" aria-live="polite">
+      <article class="bg-card border border-line rounded-2xl p-3.5 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-brand/15 text-brand">NovaSiri AI</span>
+          <button
+            type="button"
+            data-speak-target="welcomeMsg"
+            class="speak-msg-btn inline-flex items-center gap-1 text-xs font-semibold text-slate-300 hover:text-white bg-cardAlt px-2.5 py-1 rounded-lg border border-line active:scale-95 transition"
+          >
+            <!-- Inline SVG Speaker Icon -->
+            <svg class="w-3.5 h-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+            <span>শুনুন</span>
+          </button>
+        </div>
+        <div id="welcomeMsg" class="text-sm text-slate-200 leading-relaxed space-y-1.5">
+          <p class="font-semibold text-white">স্বাগতম! আমি আপনার AI ভয়েস ও পড়ালেখা অ্যাসিস্ট্যান্ট।</p>
+          <p class="text-xs text-slate-300">
+            • <b>পড়ালেখা:</b> গণিত, বিজ্ঞান, সাজেশন ও যেকোনো শিক্ষামূলক প্রশ্নের উত্তর পাবেন।<br/>
+            • <b>ভাষা:</b> ইংরেজি বললে ইংরেজি, বাংলা বললে বাংলা। অথবা বলুন <b>"আমি ইংরেজি বলবো তুমি বাংলা বলবে"</b>।<br/>
+            • <b>ভয়েস কমান্ড:</b> বলুন <b>"কল হামিদ"</b> অথবা <b>"ওপেন instagram"</b>।<br/>
+            • <b>নিরাপত্তা:</b> কোনো খারাপ কিছু চাইলে বলব: <b>"এটা আমার আইনের বাইরে"</b>।
+          </p>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+  <!-- Fixed Bottom Input + Navigation Bar -->
+  <footer class="fixed bottom-0 inset-x-0 z-30 bg-surface/95 backdrop-blur-md border-t border-line">
+    <div class="max-w-2xl mx-auto px-3 pt-2 pb-1.5">
+      <form id="promptForm" class="flex items-center gap-2 bg-card border border-line rounded-2xl p-1.5 pl-3 focus-within:border-brand transition">
+        <input
+          id="promptInput"
+          type="text"
+          autocomplete="off"
+          placeholder="প্রশ্ন লিখুন, 'কল হামিদ' বা 'ওপেন instagram' বলুন..."
+          class="flex-1 bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none min-w-0"
+        />
+        <button
+          type="button"
+          id="inlineMicBtn"
+          aria-label="Voice Input"
+          class="p-2.5 rounded-xl bg-cardAlt hover:bg-slate-700 text-brand active:scale-95 transition shrink-0"
+        >
+          <!-- Inline SVG Mic -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+          </svg>
+        </button>
+        <button
+          type="submit"
+          id="sendPromptBtn"
+          aria-label="Send Message"
+          class="px-3.5 py-2.5 rounded-xl bg-brand hover:bg-sky-400 text-slate-950 font-bold text-xs active:scale-95 transition shrink-0"
+        >
+          Send
+        </button>
+      </form>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="grid grid-cols-4 gap-1 pt-1.5 text-center" aria-label="Primary Navigation">
+        <button
+          type="button"
+          id="navHomeBtn"
+          class="flex flex-col items-center justify-center py-1 rounded-xl text-white bg-cardAlt/60 active:scale-95 transition"
+        >
+          <!-- Inline SVG Home -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+          </svg>
+          <span class="text-[10px] font-semibold mt-0.5">Home</span>
+        </button>
+
+        <button
+          type="button"
+          id="navStudyBtn"
+          class="flex flex-col items-center justify-center py-1 rounded-xl text-study hover:bg-cardAlt/60 active:scale-95 transition"
+        >
+          <!-- Inline SVG Book -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+          <span class="text-[10px] font-bold mt-0.5">পড়ালেখা</span>
+        </button>
+
+        <button
+          type="button"
+          id="navCallBtn"
+          class="flex flex-col items-center justify-center py-1 rounded-xl text-slate-300 hover:text-white hover:bg-cardAlt/60 active:scale-95 transition"
+        >
+          <!-- Inline SVG Phone -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <span class="text-[10px] font-medium mt-0.5">কল হামিদ</span>
+        </button>
+
+        <button
+          type="button"
+          id="navInstaBtn"
+          class="flex flex-col items-center justify-center py-1 rounded-xl text-slate-300 hover:text-white hover:bg-cardAlt/60 active:scale-95 transition"
+        >
+          <!-- Inline SVG External Link -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span class="text-[10px] font-medium mt-0.5">Instagram</span>
+        </button>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- GitHub Pages Info Modal -->
+  <div id="githubModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-card border border-line rounded-2xl max-w-md w-full p-4 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold text-white">GitHub Pages Deployment Guide</h3>
+        <button
+          type="button"
+          id="closeGithubModalBtn"
+          aria-label="Close Modal"
+          class="p-1.5 rounded-lg bg-cardAlt text-slate-300 hover:text-white"
+        >
+          <!-- Inline SVG X -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        এই ফাইলটি সম্পূর্ণ স্বয়ংসম্পূর্ণ (Single-File HTML/CSS/JS)। GitHub-এ একটি নতুন Repository তৈরি করে ফাইলটির নাম <code class="text-brand">index.html</code> রেখে আপলোড করুন, তারপর <b>Settings → Pages</b> থেকে branch চালু করলেই লাইভ চলবে।
+      </p>
+      <div class="flex justify-end">
+        <button
+          type="button"
+          id="okGithubModalBtn"
+          class="px-4 py-2 rounded-xl bg-brand text-slate-950 font-bold text-xs active:scale-95 transition"
+        >
+          ঠিক আছে
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Banner -->
+  <div id="toastBanner" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden bg-cardAlt border border-line text-white text-xs font-semibold px-4 py-2 rounded-full shadow-xl max-w-[90vw] truncate"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =====================================================================
+      // State & Storage
+      // =====================================================================
+      const REFUSAL_PHRASE = 'এটা আমার আইনের বাইরে';
+      const STORAGE_PHONE_KEY = 'novasiri_hamid_phone';
+
+      // Language modes:
+      // 'auto'  -> English input gets English reply; Bangla input gets Bangla reply.
+      // 'bn-bn' -> Listen Bangla, reply Bangla.
+      // 'en-en' -> Listen English, reply English.
+      // 'en-bn' -> User speaks/types English ("আমি ইংরেজি বলবো তুমি বাংলা বলবে"), Assistant replies in Bangla.
+      let currentLangMode = 'auto';
+      let isListening = false;
+      let recognition = null;
+      let hamidPhone = localStorage.getItem(STORAGE_PHONE_KEY) || '+8801711000000';
+
+      // DOM References
+      const dom = {
+        hamidPhoneInput: document.getElementById('hamidPhoneInput'),
+        saveHamidPhoneBtn: document.getElementById('saveHamidPhoneBtn'),
+        activeLangBadge: document.getElementById('activeLangBadge'),
+        langModeHint: document.getElementById('langModeHint'),
+        headerStatusSub: document.getElementById('headerStatusSub'),
+        mainMicBtn: document.getElementById('mainMicBtn'),
+        inlineMicBtn: document.getElementById('inlineMicBtn'),
+        listenPulseRing: document.getElementById('listenPulseRing'),
+        micStatePill: document.getElementById('micStatePill'),
+        speechSupportNote: document.getElementById('speechSupportNote'),
+        liveSpeechPreview: document.getElementById('liveSpeechPreview'),
+        promptForm: document.getElementById('promptForm'),
+        promptInput: document.getElementById('promptInput'),
+        chatFeed: document.getElementById('chatFeed'),
+        actionCardsArea: document.getElementById('actionCardsArea'),
+        studyPanel: document.getElementById('studyPanel'),
+        studyPanelBody: document.getElementById('studyPanelBody'),
+        toggleStudyCollapseBtn: document.getElementById('toggleStudyCollapseBtn'),
+        toastBanner: document.getElementById('toastBanner'),
+        githubModal: document.getElementById('githubModal'),
+      };
+
+      dom.hamidPhoneInput.value = hamidPhone;
+
+      // =====================================================================
+      // UI Feedback Helpers
+      // =====================================================================
+      let toastTimer = null;
+      function showToast(msg) {
+        dom.toastBanner.textContent = msg;
+        dom.toastBanner.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          dom.toastBanner.classList.add('hidden');
+        }, 2800);
+      }
+
+      function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, (ch) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+        }[ch]));
+      }
+
+      function sanitizePhone(raw) {
+        const cleaned = String(raw || '').replace(/[^\d+]/g, '');
+        return cleaned || '+8801711000000';
+      }
+
+      // =====================================================================
+      // Speech Synthesis (Voice Reply)
+      // =====================================================================
+      function speakReply(text, targetLang) {
+        if (!('speechSynthesis' in window)) return;
+        try {
+          window.speechSynthesis.cancel();
+          const clean = String(text || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+          if (!clean) return;
+
+          const utterance = new SpeechSynthesisUtterance(clean);
+          const hasBangla = /[\u0980-\u09FF]/.test(clean);
+          if (targetLang === 'en') {
+            utterance.lang = 'en-US';
+          } else if (targetLang === 'bn') {
+            utterance.lang = 'bn-BD';
+          } else {
+            utterance.lang = hasBangla ? 'bn-BD' : 'en-US';
+          }
+          utterance.rate = 1.0;
+          utterance.pitch = 1.02;
+          window.speechSynthesis.speak(utterance);
+        } catch (err) {
+          console.warn('Speech synthesis error:', err);
+        }
+      }
+
+      function stopSpeechReply() {
+        if ('speechSynthesis' in window) {
+          try {
+            window.speechSynthesis.cancel();
+            showToast('ভয়েস বন্ধ করা হয়েছে');
+          } catch (err) {
+            console.warn(err);
+          }
+        }
+      }
+
+      // =====================================================================
+      // Language Mode Management
+      // =====================================================================
+      function setLanguageMode(mode, announce = true) {
+        currentLangMode = mode;
+
+        document.querySelectorAll('.lang-mode-btn').forEach((btn) => {
+          const isActive = btn.getAttribute('data-lang-mode') === mode;
+          if (isActive) {
+            btn.className = 'lang-mode-btn px-2.5 py-2 rounded-xl text-xs font-semibold border border-brand bg-brand/20 text-white active:scale-95 transition text-center';
+          } else {
+            btn.className = 'lang-mode-btn px-2.5 py-2 rounded-xl text-xs font-semibold border border-line bg-cardAlt text-slate-300 hover:text-white active:scale-95 transition text-center';
+          }
+        });
+
+        if (mode === 'en-bn') {
+          dom.activeLangBadge.textContent = 'User EN → AI BN';
+          dom.langModeHint.textContent = 'আপনি ইংরেজিতে বলবেন/লিখবেন, আমি বাংলায় উত্তর ও ভয়েস দেব।';
+          dom.headerStatusSub.textContent = 'Bilingual Mode: You EN → AI BN';
+          if (announce) {
+            const msg = 'ঠিক আছে, আপনি ইংরেজি বলবেন এবং আমি বাংলায় উত্তর দেব।';
+            appendAssistantMessage(msg, 'LANGUAGE MODE', 'bn');
+            speakReply(msg, 'bn');
+          }
+        } else if (mode === 'en-en') {
+          dom.activeLangBadge.textContent = 'English ↔ English';
+          dom.langModeHint.textContent = 'Speech input and replies are set to English.';
+          dom.headerStatusSub.textContent = 'Mode: English ↔ English';
+          if (announce) {
+            const msg = 'Switched to English mode. Ask me anything in English.';
+            appendAssistantMessage(msg, 'LANGUAGE MODE', 'en');
+            speakReply(msg, 'en');
+          }
+        } else if (mode === 'bn-bn') {
+          dom.activeLangBadge.textContent = 'বাংলা ↔ বাংলা';
+          dom.langModeHint.textContent = 'ভয়েস ইনপুট ও উত্তর উভয়ই বাংলায় হবে।';
+          dom.headerStatusSub.textContent = 'Mode: বাংলা ↔ বাংলা';
+          if (announce) {
+            const msg = 'বাংলা মোড চালু হয়েছে। বাংলায় প্রশ্ন করুন।';
+            appendAssistantMessage(msg, 'LANGUAGE MODE', 'bn');
+            speakReply(msg, 'bn');
+          }
+        } else {
+          dom.activeLangBadge.textContent = 'Auto Match (EN→EN / BN→BN)';
+          dom.langModeHint.textContent = 'ইংরেজি বললে/লিখলে ইংরেজিতে উত্তর পাবেন, বাংলায় বললে/লিখলে বাংলায় উত্তর পাবেন।';
+          dom.headerStatusSub.textContent = 'Ready • Auto Language Match';
+          if (announce) {
+            const msg = 'Auto Language Match চালু হয়েছে। যে ভাষায় প্রশ্ন করবেন, সেই ভাষাতেই উত্তর পাবেন।';
+            appendAssistantMessage(msg, 'LANGUAGE MODE', 'bn');
+            speakReply(msg, 'bn');
+          }
+        }
+
+        // Update speech recognition language if active
+        if (recognition) {
+          recognition.lang = getRecognitionLang(currentLangMode, '');
+        }
+      }
+
+      function getRecognitionLang(mode, lastText) {
+        if (mode === 'en-bn' || mode === 'en-en') return 'en-US';
+        if (mode === 'bn-bn') return 'bn-BD';
+        // In auto mode, if last text is purely ASCII English, bias toward en-US, else bn-BD
+        if (lastText && /^[a-zA-Z0-9\s.,?!'"-]+$/.test(lastText)) return 'en-US';
+        return 'bn-BD';
+      }
+
+      function determineReplyLanguage(inputText) {
+        if (currentLangMode === 'en-bn') return 'bn';
+        if (currentLangMode === 'en-en') return 'en';
+        if (currentLangMode === 'bn-bn') return 'bn';
+
+        // Auto smart matching: if input has Bengali script -> 'bn', if primarily Latin letters -> 'en'
+        const hasBangla = /[\u0980-\u09FF]/.test(inputText);
+        if (hasBangla) return 'bn';
+        const hasLatin = /[a-zA-Z]/.test(inputText);
+        if (hasLatin) return 'en';
+        return 'bn';
+      }
+
+      // =====================================================================
+      // Speech Recognition (Mic Input)
+      // =====================================================================
+      function setupSpeechRecognition() {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+          dom.speechSupportNote.textContent = 'Text input ready';
+          return null;
+        }
+        dom.speechSupportNote.textContent = 'Voice ready';
+
+        const rec = new SpeechRec();
+        rec.interimResults = true;
+        rec.continuous = false;
+
+        rec.onstart = () => {
+          isListening = true;
+          rec.lang = getRecognitionLang(currentLangMode, dom.promptInput.value);
+          dom.listenPulseRing.classList.remove('hidden');
+          dom.micStatePill.textContent = 'Listening... (' + rec.lang + ')';
+          dom.micStatePill.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-brand/20 text-brand border border-brand/40';
+        };
+
+        rec.onresult = (event) => {
+          let interim = '';
+          let finalText = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              finalText += transcript;
+            } else {
+              interim += transcript;
+            }
+          }
+          const shown = (finalText || interim).trim();
+          if (shown) {
+            dom.liveSpeechPreview.textContent = '🎙️ "' + shown + '"';
+            dom.promptInput.value = shown;
+          }
+          if (finalText.trim()) {
+            handleUserQuery(finalText.trim(), true);
+          }
+        };
+
+        rec.onerror = (event) => {
+          isListening = false;
+          dom.listenPulseRing.classList.add('hidden');
+          dom.micStatePill.textContent = 'Mic Idle';
+          dom.micStatePill.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-cardAlt text-slate-300 border border-line';
+          if (event.error !== 'no-speech' && event.error !== 'aborted') {
+            showToast('ভয়েস ইনপুট পাওয়া যায়নি, লিখে চেষ্টা করুন।');
+          }
+        };
+
+        rec.onend = () => {
+          isListening = false;
+          dom.listenPulseRing.classList.add('hidden');
+          dom.micStatePill.textContent = 'Mic Idle';
+          dom.micStatePill.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-cardAlt text-slate-300 border border-line';
+        };
+
+        return rec;
+      }
+
+      function toggleVoiceRecognition() {
+        if (!recognition) {
+          recognition = setupSpeechRecognition();
+        }
+        if (!recognition) {
+          showToast('এই ব্রাউজারে ভয়েস সাপোর্ট নেই; টাইপ করে প্রশ্ন করুন।');
+          dom.promptInput.focus();
+          return;
+        }
+        if (isListening) {
+          try { recognition.stop(); } catch (e) {}
+        } else {
+          try {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            recognition.lang = getRecognitionLang(currentLangMode, dom.promptInput.value);
+            recognition.start();
+          } catch (err) {
+            showToast('মাইক্রোফোন চালু করা যাচ্ছে না।');
+          }
+        }
+      }
+
+      // =====================================================================
+      // Safety Guardrail ("এটা আমার আইনের বাইরে")
+      // =====================================================================
+      function isHarmfulRequest(text) {
+        const lower = String(text || '').toLowerCase();
+        const harmfulPatterns = [
+          /\b(bomb|explosive|kill\s+someone|murder|suicide|self[\s-]?harm|hack\s+bank|ddos|malware|ransomware|phishing|drug\s+dealer|illegal\s+weapon)\b/i,
+          /(বোমা|খুন|আত্মহত্যা|হ্যাক\s*কর|ম্যালওয়্যার|অবৈধ\s*অস্ত্র|মাদক\s*তৈরি|খারাপ\s*কাজ)/i,
+        ];
+        return harmfulPatterns.some((rx) => rx.test(lower));
+      }
+
+      // =====================================================================
+      // Action Commands: "কল হামিদ" & "ওপেন instagram"
+      // =====================================================================
+      function triggerCallHamid() {
+        const phone = sanitizePhone(dom.hamidPhoneInput.value || hamidPhone);
+        hamidPhone = phone;
+        localStorage.setItem(STORAGE_PHONE_KEY, phone);
+
+        const replyLang = currentLangMode === 'en-en' ? 'en' : 'bn';
+        const spokenMsg = replyLang === 'en'
+          ? `Calling Hamid at ${phone}.`
+          : `হামিদকে (${phone}) কল করা হচ্ছে।`;
+
+        dom.actionCardsArea.innerHTML = `
+          <div class="bg-card border border-emerald-500/50 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-lg">
+            <div class="min-w-0">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
+                Siri Voice Call
+              </span>
+              <p class="text-sm font-bold text-white mt-1 truncate">কল হামিদ (${escapeHtml(phone)})</p>
+              <p class="text-xs text-slate-400">নিচের কল বাটনে চাপ দিয়ে ফোনে কল দিন।</p>
+            </div>
+            <a
+              href="tel:${escapeHtml(phone)}"
+              class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs active:scale-95 transition shadow"
+            >
+              <!-- Inline SVG Call -->
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span>Call Now</span>
+            </a>
+          </div>
+        `;
+
+        appendAssistantMessage(spokenMsg, 'CALL ACTION', replyLang);
+        speakReply(spokenMsg, replyLang);
+        showToast('কল হামিদ: ' + phone);
+      }
+
+      function triggerOpenInstagram() {
+        const instaUrl = 'https://www.instagram.com/';
+        let openedNewTab = false;
+        try {
+          const win = window.open(instaUrl, '_blank', 'noopener,noreferrer');
+          if (win) openedNewTab = true;
+        } catch (err) {
+          openedNewTab = false;
+        }
+
+        const replyLang = currentLangMode === 'en-en' ? 'en' : 'bn';
+        const spokenMsg = replyLang === 'en'
+          ? 'Opening Instagram.'
+          : 'Instagram ওপেন করা হচ্ছে।';
+
+        dom.actionCardsArea.innerHTML = `
+          <div class="bg-card border border-pink-500/50 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-lg">
+            <div class="min-w-0">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300">
+                App Launcher
+              </span>
+              <p class="text-sm font-bold text-white mt-1 truncate">Instagram</p>
+              <p class="text-xs text-slate-400">
+                ${openedNewTab ? 'নতুন ট্যাবে Instagram খোলা হয়েছে।' : 'ব্রাউজার পপ-আপ আটকালে নিচের বাটনে চাপ দিন।'}
+              </p>
+            </div>
+            <a
+              href="${instaUrl}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-amber-500 text-white font-bold text-xs active:scale-95 transition shadow"
+            >
+              <span>Open App</span>
+            </a>
+          </div>
+        `;
+
+        appendAssistantMessage(spokenMsg, 'INSTAGRAM', replyLang);
+        speakReply(spokenMsg, replyLang);
+        showToast('ওপেন Instagram');
+      }
+
+      // =====================================================================
+      // Study, Facts & Smart Knowledge Engine
+      // =====================================================================
+      function generateSmartAnswer(rawQuery, replyLang) {
+        const q = String(rawQuery || '').toLowerCase();
+
+        // Facts response
+        if (q.includes('ফ্যাক্ট') || q.includes('fact')) {
+          if (replyLang === 'en') {
+            return 'New Fact: Honey never spoils when stored properly in a sealed container, and an octopus has three hearts and blue copper-based blood.';
+          }
+          return 'নতুন ফ্যাক্ট: সঠিকভাবে বায়ুরোধী পাত্রে রাখলে মধু কখনো নষ্ট হয় না। এছাড়া অক্টোপাসের তিনটি হৃদপিণ্ড এবং নীল রঙের রক্ত থাকে।';
+        }
+
+        // Math response
+        if (q.includes('গণিত') || q.includes('দ্বিঘাত') || q.includes('math') || q.includes('equation') || q.includes('x²')) {
+          if (replyLang === 'en') {
+            return 'Math Study Guide: For a quadratic equation ax² + bx + c = 0, use x = [-b ± √(b² - 4ac)] / (2a). For example, x² - 5x + 6 = 0 factors into (x - 2)(x - 3) = 0, giving x = 2 or x = 3.';
+          }
+          return 'গণিত সমাধান ও নিয়ম: দ্বিঘাত সমীকরণ ax² + bx + c = 0 হলে x = [-b ± √(b² - 4ac)] / (2a) সূত্র ব্যবহার করা যায়। যেমন x² - 5x + 6 = 0 কে উৎপাদকে ভাঙলে (x - 2)(x - 3) = 0 হয়, ফলে x = 2 অথবা x = 3।';
+        }
+
+        // Science / Physics / Newton
+        if (q.includes('বিজ্ঞান') || q.includes('নিউটন') || q.includes('science') || q.includes('newton') || q.includes('circuit') || q.includes('motor') || q.includes('led')) {
+          if (replyLang === 'en') {
+            return 'Science & Study Answer: Newton’s First Law states an object stays at rest or in uniform motion unless acted on by a net external force; Second Law gives F = ma; Third Law states every action has an equal and opposite reaction. For an LED circuit, always connect a current-limiting resistor in series.';
+          }
+          return 'বিজ্ঞান ও পড়ালেখার উত্তর: নিউটনের প্রথম সূত্র অনুযায়ী বাহ্যিক বল প্রয়োগ না করলে স্থির বস্তু স্থির এবং গতিশীল বস্তু সুষম গতিতে চলে। দ্বিতীয় সূত্র অনুযায়ী বল F = ma, এবং তৃতীয় সূত্রে প্রতিটি ক্রিয়ারই সমান ও বিপরীত প্রতিক্রিয়া রয়েছে। LED সার্কিটে LED বাঁচাতে সিরিজে রেজিস্টর ব্যবহার করা জরুরি।';
+        }
+
+        // Study suggestions / exam tips
+        if (q.includes('সাজেশন') || q.includes('পড়ালেখা') || q.includes('পরীক্ষা') || q.includes('study') || q.includes('suggestion') || q.includes('exam')) {
+          if (replyLang === 'en') {
+            return 'Study Suggestions: 1) Study in focused 25–40 minute blocks with short breaks. 2) Summarize each chapter in your own words. 3) Practice past questions and write key formulas on one page for quick revision.';
+          }
+          return 'পড়ালেখার সাজেশন: ১) ২৫-৪০ মিনিট মনোযোগ দিয়ে পড়ে ৫-১০ মিনিট বিরতি নিন। ২) প্রতিটি অধ্যায় নিজের ভাষায় সংক্ষেপে নোট করুন। ৩) গুরুত্বপূর্ণ সূত্র ও সংজ্ঞা এক পৃষ্ঠায় লিখে নিয়মিত রিভিশন দিন।';
+        }
+
+        // General helpful answer matching requested language
+        if (replyLang === 'en') {
+          return `Study & AI Answer for "${rawQuery}": Break the topic into core definitions, key principles, and a practical example. Ask a specific follow-up question in Math, Science, Coding, or Exam Tips for a detailed step-by-step explanation.`;
+        }
+        return `"${rawQuery}" বিষয়ে উত্তর: যেকোনো বিষয় ভালোভাবে বুঝতে হলে প্রথমে মূল সংজ্ঞা, এরপর মূল নিয়ম বা সূত্র এবং শেষে বাস্তব উদাহরণ দিয়ে অনুশীলন করতে হবে। গণিত, বিজ্ঞান বা সাজেশনের নির্দিষ্ট প্রশ্ন করলে আরও বিস্তারিত ব্যাখ্যা দেওয়া হবে।`;
+      }
+
+      function handleUserQuery(rawText, fromVoice = false) {
+        const trimmed = String(rawText || '').trim();
+        if (!trimmed) return;
+
+        appendUserMessage(trimmed, fromVoice);
+        dom.promptInput.value = '';
+        dom.liveSpeechPreview.textContent = (fromVoice ? '🎙️ ' : '') + trimmed;
+
+        // 1. Strict safety refusal rule
+        if (isHarmfulRequest(trimmed)) {
+          const replyLang = determineReplyLanguage(trimmed);
+          appendAssistantMessage(REFUSAL_PHRASE, 'SAFETY RULE', replyLang);
+          speakReply(REFUSAL_PHRASE, 'bn');
+          return;
+        }
+
+        // 2. Bilingual mode switch voice/text command ("আমি ইংরেজি বলবো তুমি বাংলা বলবে")
+        const normalized = trimmed.toLowerCase();
+        if (
+          normalized.includes('আমি ইংরেজি বলবো তুমি বাংলা বলবে') ||
+          normalized.includes('তুমি বাংলা বলবে আমি ইংরেজি বলবো') ||
+          normalized.includes('i speak english you reply in bangla') ||
+          normalized.includes('i speak english you reply in bengali')
+        ) {
+          setLanguageMode('en-bn', true);
+          return;
+        }
+
+        if (normalized.includes('auto language') || normalized.includes('অটো ভাষা')) {
+          setLanguageMode('auto', true);
+          return;
+        }
+
+        // 3. Action command: "কল হামিদ" / "call hamid"
+        if (
+          normalized.includes('কল হামিদ') ||
+          normalized.includes('হামিদকে কল') ||
+          normalized.includes('call hamid')
+        ) {
+          triggerCallHamid();
+          return;
+        }
+
+        // 4. Action command: "ওপেন instagram" / "open instagram"
+        if (
+          normalized.includes('ওপেন instagram') ||
+          normalized.includes('ওপেন ইনস্টাগ্রাম') ||
+          normalized.includes('open instagram') ||
+          (normalized.includes('instagram') && (normalized.includes('open') || normalized.includes('ওপেন')))
+        ) {
+          triggerOpenInstagram();
+          return;
+        }
+
+        // 5. Generate answer in matched or bilingual target language
+        const replyLang = determineReplyLanguage(trimmed);
+        const answerText = generateSmartAnswer(trimmed, replyLang);
+        const badge = replyLang === 'en' ? 'AI ANSWER (EN)' : 'AI উত্তর (BN)';
+        appendAssistantMessage(answerText, badge, replyLang);
+        speakReply(answerText, replyLang);
+      }
+
+      // =====================================================================
+      // Feed Rendering & Event Delegation
+      // =====================================================================
+      let msgCounter = 1;
+
+      function appendUserMessage(text, isVoice) {
+        const el = document.createElement('article');
+        el.className = 'flex justify-end';
+        el.innerHTML = `
+          <div class="max-w-[85%] bg-brand text-slate-950 font-medium text-sm px-3.5 py-2.5 rounded-2xl rounded-br-sm shadow">
+            ${isVoice ? '<span class="text-[10px] font-extrabold uppercase block opacity-75">Voice</span>' : ''}
+            <span>${escapeHtml(text)}</span>
+          </div>
+        `;
+        dom.chatFeed.appendChild(el);
+        el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+
+      function appendAssistantMessage(text, badgeLabel, replyLang) {
+        msgCounter += 1;
+        const bodyId = 'aiBody_' + msgCounter;
+        const el = document.createElement('article');
+        el.className = 'bg-card border border-line rounded-2xl p-3.5 space-y-2 shadow';
+        el.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-study/15 text-study">
+              ${escapeHtml(badgeLabel || 'NovaSiri AI')}
+            </span>
+            <button
+              type="button"
+              data-speak-target="${bodyId}"
+              data-speak-lang="${replyLang || 'bn'}"
+              class="speak-msg-btn inline-flex items-center gap-1 text-xs font-semibold text-slate-300 hover:text-white bg-cardAlt px-2.5 py-1 rounded-lg border border-line active:scale-95 transition"
+            >
+              <svg class="w-3.5 h-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+              </svg>
+              <span>${replyLang === 'en' ? 'Speak' : 'শুনুন'}</span>
+            </button>
+          </div>
+          <div id="${bodyId}" class="text-sm text-slate-200 leading-relaxed whitespace-pre-line">${escapeHtml(text)}</div>
+        `;
+        dom.chatFeed.appendChild(el);
+        el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+
+      function focusStudyMode() {
+        dom.studyPanelBody.classList.remove('hidden');
+        dom.studyPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        showToast('পড়ালেখা মোড সক্রিয়');
+      }
+
+      // =====================================================================
+      // Bind All Buttons & Controls Reliably
+      // =====================================================================
+      document.getElementById('brandResetBtn').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('NovaSiri AI Home');
+      });
+
+      document.getElementById('githubBadgeBtn').addEventListener('click', () => {
+        dom.githubModal.classList.remove('hidden');
+        dom.githubModal.classList.add('flex');
+      });
+
+      document.getElementById('closeGithubModalBtn').addEventListener('click', () => {
+        dom.githubModal.classList.add('hidden');
+        dom.githubModal.classList.remove('flex');
+      });
+
+      document.getElementById('okGithubModalBtn').addEventListener('click', () => {
+        dom.githubModal.classList.add('hidden');
+        dom.githubModal.classList.remove('flex');
+      });
+
+      document.getElementById('stopSpeechBtn').addEventListener('click', stopSpeechReply);
+
+      document.querySelectorAll('.lang-mode-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-lang-mode');
+          setLanguageMode(mode, true);
+        });
+      });
+
+      dom.mainMicBtn.addEventListener('click', toggleVoiceRecognition);
+      dom.inlineMicBtn.addEventListener('click', toggleVoiceRecognition);
+
+      document.getElementById('topStudyBtn').addEventListener('click', focusStudyMode);
+      document.getElementById('quickStudyBtn').addEventListener('click', focusStudyMode);
+      document.getElementById('navStudyBtn').addEventListener('click', focusStudyMode);
+
+      dom.toggleStudyCollapseBtn.addEventListener('click', () => {
+        dom.studyPanelBody.classList.toggle('hidden');
+      });
+
+      document.querySelectorAll('.study-topic-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const studyPrompt = btn.getAttribute('data-study-prompt');
+          handleUserQuery(studyPrompt, false);
+        });
+      });
+
+      dom.saveHamidPhoneBtn.addEventListener('click', () => {
+        hamidPhone = sanitizePhone(dom.hamidPhoneInput.value);
+        dom.hamidPhoneInput.value = hamidPhone;
+        localStorage.setItem(STORAGE_PHONE_KEY, hamidPhone);
+        showToast('হামিদের নম্বর সেভ হয়েছে: ' + hamidPhone);
+      });
+
+      document.getElementById('quickCallHamidBtn').addEventListener('click', triggerCallHamid);
+      document.getElementById('navCallBtn').addEventListener('click', triggerCallHamid);
+
+      document.getElementById('quickOpenInstaBtn').addEventListener('click', triggerOpenInstagram);
+      document.getElementById('navInstaBtn').addEventListener('click', triggerOpenInstagram);
+
+      document.getElementById('quickFactBtn').addEventListener('click', () => {
+        const factPrompt = currentLangMode === 'en-en' ? 'Tell me a new fact' : 'নতুন ফ্যাক্ট বলো';
+        handleUserQuery(factPrompt, false);
+      });
+
+      document.getElementById('navHomeBtn').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('Home');
+      });
+
+      dom.promptForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleUserQuery(dom.promptInput.value, false);
+      });
+
+      // Delegated click handler for any "শুনুন / Speak" button
+      dom.chatFeed.addEventListener('click', (event) => {
+        const btn = event.target.closest('.speak-msg-btn');
+        if (!btn) return;
+        const targetId = btn.getAttribute('data-speak-target');
+        const langAttr = btn.getAttribute('data-speak-lang') || '';
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          speakReply(targetEl.textContent, langAttr);
+        }
+      });
+
+      // Initialize speech recognition readiness note
+      recognition = setupSpeechRecognition();
+    })();
+  </script>
+</body>
+</html>
